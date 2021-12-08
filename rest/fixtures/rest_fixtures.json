@@ -1,0 +1,134 @@
+[
+  {
+    "model": "rest.driver",
+    "pk": 1,
+    "fields": {
+      "first_name": "Johny",
+      "last_name": "Booba1",
+      "created_at": "2021-01-16T17:41:28+00:00",
+      "updated_at": "2021-06-16T17:41:28+00:00"
+    }
+  },
+  {
+    "model": "rest.driver",
+    "pk": 2,
+    "fields": {
+      "first_name": "Johny",
+      "last_name": "Booba2",
+      "created_at": "2021-03-16T17:41:28+00:00",
+      "updated_at": "2021-06-16T17:41:28+00:00"
+    }
+  },
+  {
+    "model": "rest.driver",
+    "pk": 3,
+    "fields": {
+      "first_name": "Johny",
+      "last_name": "Booba3",
+      "created_at": "2021-06-16T17:41:28+00:00",
+      "updated_at": "2021-09-16T17:41:28+00:00"
+    }
+  },
+  {
+    "model": "rest.driver",
+    "pk": 4,
+    "fields": {
+      "first_name": "Johny",
+      "last_name": "Booba4",
+      "created_at": "2021-09-16T17:41:28+00:00",
+      "updated_at": "2021-10-16T17:41:28+00:00"
+    }
+  },
+  {
+    "model": "rest.driver",
+    "pk": 5,
+    "fields": {
+      "first_name": "Johny",
+      "last_name": "Booba5",
+      "created_at": "2021-11-16T17:41:28+00:00",
+      "updated_at": "2021-11-16T17:41:28+00:00"
+    }
+  },
+  {
+    "model": "rest.driver",
+    "pk": 6,
+    "fields": {
+      "first_name": "Johny",
+      "last_name": "Booba6",
+      "created_at": "2021-11-16T17:41:28+00:00",
+      "updated_at": "2021-11-16T17:41:28+00:00"
+    }
+  },
+  {
+    "model": "rest.vehicle",
+    "pk": 1,
+    "fields": {
+      "driver": 1,
+      "make": "M1",
+      "model": "QW11",
+      "plate_number": "AA 9821 FF",
+      "created_at": "2021-10-16T17:41:28+00:00",
+      "updated_at": "2021-10-16T17:41:28+00:00"
+    }
+  },
+  {
+    "model": "rest.vehicle",
+    "pk": 2,
+    "fields": {
+      "driver": 1,
+      "make": "M1",
+      "model": "QW112",
+      "plate_number": "AA 9822 FF",
+      "created_at": "2021-10-16T17:41:28+00:00",
+      "updated_at": "2021-10-16T17:41:28+00:00"
+    }
+  },
+  {
+    "model": "rest.vehicle",
+    "pk": 3,
+    "fields": {
+      "driver": 2,
+      "make": "M1",
+      "model": "QW113",
+      "plate_number": "AA 9823 FF",
+      "created_at": "2021-10-16T17:41:28+00:00",
+      "updated_at": "2021-10-16T17:41:28+00:00"
+    }
+  },
+  {
+    "model": "rest.vehicle",
+    "pk": 4,
+    "fields": {
+      "driver": 1,
+      "make": "M1",
+      "model": "QW114",
+      "plate_number": "AA 9824 FF",
+      "created_at": "2021-10-16T17:41:28+00:00",
+      "updated_at": "2021-10-16T17:41:28+00:00"
+    }
+  },
+  {
+    "model": "rest.vehicle",
+    "pk": 5,
+    "fields": {
+      "driver": 1,
+      "make": "M1",
+      "model": "QW115",
+      "plate_number": "AA 9825 FF",
+      "created_at": "2021-10-16T17:41:28+00:00",
+      "updated_at": "2021-10-16T17:41:28+00:00"
+    }
+  },
+  {
+    "model": "rest.vehicle",
+    "pk": 6,
+    "fields": {
+      "driver": null,
+      "make": "M1",
+      "model": "QW116",
+      "plate_number": "AA 9826 FF",
+      "created_at": "2021-10-16T17:41:28+00:00",
+      "updated_at": "2021-10-16T17:41:28+00:00"
+    }
+  }
+]

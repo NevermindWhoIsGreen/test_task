@@ -4,12 +4,10 @@ from rest.models import Driver, Vehicle
 
 from django.conf import settings
 
-SERIALIZE_FIELD_DT = serializers.DateTimeField(format=settings.DATETIME_INPUT_FORMATS, required=False)
-
 
 class DriverSerializer(serializers.ModelSerializer):
-    created_at = SERIALIZE_FIELD_DT
-    updated_at = SERIALIZE_FIELD_DT
+    created_at = serializers.DateTimeField(format=settings.DATETIME_INPUT_FORMATS, required=False)
+    updated_at = serializers.DateTimeField(format=settings.DATETIME_INPUT_FORMATS, required=False)
 
     class Meta:
         model = Driver
@@ -17,8 +15,8 @@ class DriverSerializer(serializers.ModelSerializer):
 
 
 class VehicleSerializer(serializers.ModelSerializer):
-    created_at = SERIALIZE_FIELD_DT
-    updated_at = SERIALIZE_FIELD_DT
+    created_at = serializers.DateTimeField(format=settings.DATETIME_INPUT_FORMATS, required=False)
+    updated_at = serializers.DateTimeField(format=settings.DATETIME_INPUT_FORMATS, required=False)
     plate_number = serializers.RegexField(r'^[A-Z]{2} \d{4} [A-Z]{2}$', max_length=10)
 
     class Meta:

@@ -22,7 +22,7 @@ class Driver(models.Model):
 # + created_at
 # + updated_at
 class Vehicle(models.Model):
-    driver = models.ForeignKey(Driver, blank=True, null=True, related_name='vehicles', on_delete=models.CASCADE)
+    driver = models.ForeignKey(Driver, blank=True, null=True, related_name='vehicles', on_delete=models.SET_NULL)
     make = models.CharField(max_length=255)
     model = models.CharField(max_length=255)
     plate_number = models.CharField(max_length=10)

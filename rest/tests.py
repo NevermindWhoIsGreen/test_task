@@ -26,7 +26,7 @@ class RestDriverTest(RestFixtures):
         response = self.client.get(reverse('driver-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         drivers = Driver.objects.all()
-        self.assertListEqual([x['id'] for x in response.data], list(drivers.values_list('id', flat=True)))
+        self.assertListEqual([x['id'] for x in response.data], list(drivers.order_by('id').values_list('id', flat=True)))
 
     def test_driver_list_created_at(self):
         """
@@ -36,12 +36,12 @@ class RestDriverTest(RestFixtures):
         response = self.client.get(f"{reverse('driver-list')}?created_at__gte=10-11-2021")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         drivers_created_at = Driver.objects.filter(created_at__gte=datetime.strptime('10-11-2021', '%d-%m-%Y'))
-        self.assertListEqual([x['id'] for x in response.data], list(drivers_created_at.values_list('id', flat=True)))
+        self.assertListEqual([x['id'] for x in response.data], list(drivers_created_at.order_by('id').values_list('id', flat=True)))
 
         response = self.client.get(f"{reverse('driver-list')}?created_at__lte=16-11-2021")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         drivers_created_at = Driver.objects.filter(created_at__lte=datetime.strptime('16-11-2021', '%d-%m-%Y'))
-        self.assertListEqual([x['id'] for x in response.data], list(drivers_created_at.values_list('id', flat=True)))
+        self.assertListEqual([x['id'] for x in response.data], list(drivers_created_at.order_by('id').values_list('id', flat=True)))
 
     def test_get_driver_data(self):
         """
@@ -111,7 +111,7 @@ class VehicleRestTest(RestFixtures):
         response = self.client.get(reverse('vehicle-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         vehicles = Vehicle.objects.all()
-        self.assertListEqual([x['id'] for x in response.data], list(vehicles.values_list('id', flat=True)))
+        self.assertListEqual([x['id'] for x in response.data], list(vehicles.order_by('id').values_list('id', flat=True)))
 
     def test_vehicle_list_with_drivers_and_no_drivers(self):
         """
@@ -121,12 +121,12 @@ class VehicleRestTest(RestFixtures):
         response = self.client.get(f"{reverse('vehicle-list')}?with_drivers=yes")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         vehicle_with_drivers = Vehicle.objects.filter(driver__isnull=False)
-        self.assertListEqual([x['id'] for x in response.data], list(vehicle_with_drivers.values_list('id', flat=True)))
+        self.assertListEqual([x['id'] for x in response.data], list(vehicle_with_drivers.order_by('id').values_list('id', flat=True)))
 
         response = self.client.get(f"{reverse('vehicle-list')}?with_drivers=no")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         vehicle_with_no_drivers = Vehicle.objects.filter(driver__isnull=True)
-        self.assertListEqual([x['id'] for x in response.data], list(vehicle_with_no_drivers.values_list('id', flat=True)))
+        self.assertListEqual([x['id'] for x in response.data], list(vehicle_with_no_drivers.order_by('id').values_list('id', flat=True)))
 
     def test_get_vehicle_data(self):
         """
@@ -193,11 +193,11 @@ class VehicleRestTest(RestFixtures):
         + DELETE /vehicles/vehicle/<vehicle_id>/ - видалення машини
         """""
         vehicle = Vehicle.objects.get(id=2)
-        response = self.client.delete(reverse('driver-detail', kwargs={'pk': vehicle.pk}))
+        response = self.client.delete(reverse('vehicle-detail', kwargs={'pk': vehicle.pk}))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Vehicle.objects.filter(id=vehicle.pk).exists())
 
-        response = self.client.delete(reverse('driver-detail', kwargs={'pk': 30}))
+        response = self.client.delete(reverse('vehicle-detail', kwargs={'pk': 30}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_in_the_car(self):

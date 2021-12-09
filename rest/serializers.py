@@ -2,9 +2,9 @@ from rest_framework import serializers
 
 from rest.models import Driver, Vehicle
 
-from test_task.settings import DATETIME_INPUT_FORMATS
+from django.conf import settings
 
-SERIALIZE_FIELD_DT = serializers.DateTimeField(format=DATETIME_INPUT_FORMATS, required=False)
+SERIALIZE_FIELD_DT = serializers.DateTimeField(format=settings.DATETIME_INPUT_FORMATS, required=False)
 
 
 class DriverSerializer(serializers.ModelSerializer):

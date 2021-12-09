@@ -13,18 +13,11 @@ class DriverView(viewsets.ModelViewSet):
     serializer_class = DriverSerializer
 
     def get_queryset(self):
-        # Так как мне нельзя использовать формы "+ Завдання зроблене з допомогою форм не зараховується - вчимося читати ТЗ"
-        # использовать django_filters тоже нельзя под капотом будут формы :D
-        # с django_filters можно было бы добавить filter_class для вьюшки, немного его подправить, что бы работал с нужными форматами
-        # ну или так...
-        req_get = self.request.GET
-        get_date_gte = req_get.get('created_at__gte')
-        get_date_lte = req_get.get('created_at__lte')
-        if get_date_gte:
-            return self.queryset.filter(created_at__gte=datetime.strptime(get_date_gte, '%d-%m-%Y'))
-        elif get_date_lte:
-            return self.queryset.filter(created_at__lte=datetime.strptime(get_date_lte, '%d-%m-%Y'))
-        return super().get_queryset()
+        query_set = super().get_queryset()
+        for filter_name, value in self.request.GET.items():
+            if filter_name in ('created_at__gte', 'created_at__lte'):
+                query_set = query_set.filter(**{filter_name: datetime.strptime(value, '%d-%m-%Y')})
+        return query_set
 
 
 class VehicleView(viewsets.ModelViewSet):

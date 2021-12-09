@@ -6,7 +6,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from .models import Driver, Vehicle
-from .serializers import DriverSerializer, VehicleSerializer
+from .serializers import VehicleSerializer
 
 
 class RestFixtures(TestCase):
@@ -26,8 +26,7 @@ class RestDriverTest(RestFixtures):
         response = self.client.get(reverse('driver-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         drivers = Driver.objects.all()
-        serializer = DriverSerializer(drivers, many=True)
-        self.assertEqual(response.data, serializer.data)
+        self.assertListEqual([x['id'] for x in response.data], list(drivers.values_list('id', flat=True)))
 
     def test_driver_list_created_at(self):
         """
@@ -37,14 +36,12 @@ class RestDriverTest(RestFixtures):
         response = self.client.get(f"{reverse('driver-list')}?created_at__gte=10-11-2021")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         drivers_created_at = Driver.objects.filter(created_at__gte=datetime.strptime('10-11-2021', '%d-%m-%Y'))
-        serializer = DriverSerializer(drivers_created_at, many=True)
-        self.assertEqual(response.data, serializer.data)
+        self.assertListEqual([x['id'] for x in response.data], list(drivers_created_at.values_list('id', flat=True)))
 
         response = self.client.get(f"{reverse('driver-list')}?created_at__lte=16-11-2021")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         drivers_created_at = Driver.objects.filter(created_at__lte=datetime.strptime('16-11-2021', '%d-%m-%Y'))
-        serializer = DriverSerializer(drivers_created_at, many=True)
-        self.assertEqual(response.data, serializer.data)
+        self.assertListEqual([x['id'] for x in response.data], list(drivers_created_at.values_list('id', flat=True)))
 
     def test_get_driver_data(self):
         """
@@ -53,8 +50,7 @@ class RestDriverTest(RestFixtures):
         driver = Driver.objects.get(id=1)
         response = self.client.get(reverse('driver-detail', kwargs={'pk': driver.pk}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        serializer = DriverSerializer(driver)
-        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.data.get('id'), driver.pk)
         # 404
         response = self.client.get(reverse('driver-detail', kwargs={'pk': 948473}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -63,12 +59,14 @@ class RestDriverTest(RestFixtures):
         """
         + POST /drivers/driver/ - створення нового водія
         """
+        data = {'first_name': 'created', 'last_name': 'driver'}
         response = self.client.post(
             reverse('driver-list'),
-            data=json.dumps({'first_name': 'created', 'last_name': 'driver'}),
+            data=json.dumps(data),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(Driver.objects.filter(**data).exists())
 
         # 400
         response = self.client.post(
@@ -98,6 +96,7 @@ class RestDriverTest(RestFixtures):
         driver = Driver.objects.get(id=2)
         response = self.client.delete(reverse('driver-detail', kwargs={'pk': driver.pk}))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Driver.objects.filter(id=driver.pk).exists())
 
         response = self.client.delete(reverse('driver-detail', kwargs={'pk': 30}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -112,8 +111,7 @@ class VehicleRestTest(RestFixtures):
         response = self.client.get(reverse('vehicle-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         vehicles = Vehicle.objects.all()
-        serializer = VehicleSerializer(vehicles, many=True)
-        self.assertEqual(response.data, serializer.data)
+        self.assertListEqual([x['id'] for x in response.data], list(vehicles.values_list('id', flat=True)))
 
     def test_vehicle_list_with_drivers_and_no_drivers(self):
         """
@@ -123,14 +121,12 @@ class VehicleRestTest(RestFixtures):
         response = self.client.get(f"{reverse('vehicle-list')}?with_drivers=yes")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         vehicle_with_drivers = Vehicle.objects.filter(driver__isnull=False)
-        serializer = VehicleSerializer(vehicle_with_drivers, many=True)
-        self.assertEqual(response.data, serializer.data)
+        self.assertListEqual([x['id'] for x in response.data], list(vehicle_with_drivers.values_list('id', flat=True)))
 
         response = self.client.get(f"{reverse('vehicle-list')}?with_drivers=no")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         vehicle_with_no_drivers = Vehicle.objects.filter(driver__isnull=True)
-        serializer = VehicleSerializer(vehicle_with_no_drivers, many=True)
-        self.assertEqual(response.data, serializer.data)
+        self.assertListEqual([x['id'] for x in response.data], list(vehicle_with_no_drivers.values_list('id', flat=True)))
 
     def test_get_vehicle_data(self):
         """
@@ -139,8 +135,8 @@ class VehicleRestTest(RestFixtures):
         vehicle = Vehicle.objects.get(id=1)
         response = self.client.get(reverse('vehicle-detail', kwargs={'pk': vehicle.pk}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        serializer = VehicleSerializer(vehicle)
-        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.data.get('id'), vehicle.pk)
+
         # 404
         response = self.client.get(reverse('driver-detail', kwargs={'pk': 948473}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -149,12 +145,14 @@ class VehicleRestTest(RestFixtures):
         """
         + POST /vehicles/vehicle/ - створення нової машини
         """
+        data = {'driver': 1, 'make': 'D1', 'model': 'D1d', 'plate_number': 'DD 3333 RR'}
         response = self.client.post(
             reverse('vehicle-list'),
-            data=json.dumps({'driver': 1, 'make': 'D1', 'model': 'D1d', 'plate_number': 'DD 3333 RR'}),
+            data=json.dumps(data),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(Vehicle.objects.filter(**data).exists())
 
         # 400
         response = self.client.post(
@@ -165,12 +163,14 @@ class VehicleRestTest(RestFixtures):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         # check plate_number
+        data_with_wrong_plate_number = {'driver': 1, 'make': 'D1', 'model': 'D1d', 'plate_number': 'A223DF23'}
         response = self.client.post(
             reverse('vehicle-list'),
-            data=json.dumps({'driver': 1, 'make': 'D1', 'model': 'D1d', 'plate_number': 'A223DF23'}),
+            data=json.dumps(data_with_wrong_plate_number),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(Vehicle.objects.filter(**data_with_wrong_plate_number).exists())
         error = response.data.get('plate_number')[0]
         self.assertEqual(error.code, 'invalid')
         self.assertEqual(error, 'This value does not match the required pattern.')
@@ -195,6 +195,7 @@ class VehicleRestTest(RestFixtures):
         vehicle = Vehicle.objects.get(id=2)
         response = self.client.delete(reverse('driver-detail', kwargs={'pk': vehicle.pk}))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Vehicle.objects.filter(id=vehicle.pk).exists())
 
         response = self.client.delete(reverse('driver-detail', kwargs={'pk': 30}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
